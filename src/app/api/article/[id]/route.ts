@@ -15,7 +15,9 @@ interface Ref {
 function gatewayUrl(ref: Ref): string {
   switch (ref.chain) {
     case "arweave":
-      return `https://arweave.net/${ref.storage}`;
+      return ref.storage.startsWith("ar-demo-")
+        ? ""
+        : `https://arweave.net/${ref.storage}`;
     case "base":
       return ref.storage.startsWith("mock-")
         ? "" // mock 沒有 URL,前端會 fallback
