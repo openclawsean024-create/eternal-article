@@ -58,9 +58,14 @@ export async function GET(
       return NextResponse.json({
         ref,
         mock: true,
-        title: "(Mock Article)",
+        title: "(Demo Article)",
         content:
-          "這是一篇在 demo 模式下上傳的文章。真實環境中,內容會從 IPFS / Walrus / Arweave 拉取。\n\n請在 .env 設定 NEXT_PUBLIC_PINATA_JWT 等服務以啟用真實上傳。",
+          "這是一篇在 demo 模式下「上傳」的文章。\n\n" +
+          "💡 這不是真實的區塊鏈交易。要體驗真實上鏈,請:\n" +
+          "1. 安裝對應鏈的錢包(MetaMask / Sui Wallet / ArConnect)\n" +
+          "2. 回到首頁選擇主鏈\n" +
+          "3. 連接錢包 → 寫文章 → 上傳\n\n" +
+          "本 demo URL 的 hash 是確定性的:重新整理會看到相同內容(直到部署重啟)。",
         author: "anonymous",
       });
     }

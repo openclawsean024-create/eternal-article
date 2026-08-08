@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CHAINS, CHAIN_ORDER } from "@/lib/chains";
 import { ChainCard } from "@/components/ChainCard";
 import { Hero } from "@/components/Hero";
+import { DemoButton } from "@/components/DemoButton";
 
 export default function Home() {
   return (
@@ -10,13 +11,11 @@ export default function Home() {
 
       {/* 主鏈選擇區 */}
       <section className="mt-24">
-        <div className="flex items-baseline justify-between mb-8">
+        <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
             選擇一條鏈
           </h2>
-          <span className="text-sm text-white/40">
-            每一條都能讓你的文章「永遠不會消失」
-          </span>
+          <DemoButton />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
