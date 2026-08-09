@@ -84,7 +84,9 @@ export async function uploadToBase(
     // Mock 模式: 用 SHA-256 模擬 CID
     const hash = await sha256Hex(data);
     cid = `mock-${hash.slice(0, 46)}`; // IPFS CID v0 length
-    console.warn("[Base] Pinata 不可用,使用 mock CID:", cid, e);
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[Base] Pinata 不可用,使用 mock CID:", cid, e);
+    }
   }
 
   callbacks.onStore?.();
@@ -113,7 +115,9 @@ export async function uploadToBase(
     // Mock anchor: 確定性 hash
     const hash = await sha256Hex(new TextEncoder().encode(`${cid}|${walletAddress}|${Date.now()}`));
     txHash = `0x${hash.slice(0, 64)}`;
-    console.warn("[Base] Anchor 不可用,使用 mock txHash:", txHash, e);
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[Base] Anchor 不可用,使用 mock txHash:", txHash, e);
+    }
   }
 
   callbacks.onAnchor?.(txHash);

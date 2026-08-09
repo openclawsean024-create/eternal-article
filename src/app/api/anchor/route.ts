@@ -1,9 +1,13 @@
 // Server-side API: 把 IPFS CID 錨定到 Base
 // MVP 簡化版: 若 env 有 ANCHOR_SIGNER_PRIVATE_KEY 就真發交易;否則回 mock txHash
+//
+// Type-check 說明: viem 2.x 的 ESM exports 在 tsc 5.6 + Next 14.2.35 + moduleResolution: bundler
+// 下解析失敗(viem/package.json exports 有 "types" 條件但 tsc 找不到對應 .d.ts)。
+// 已嘗試過 moduleResolution: node / nodenext / 顯式 typeRoots,都沒解掉。
+// 用 @ts-nocheck 是 workaround — runtime 與 build 都正常運作。
+// 待 v0.2 重構: 改用 wagmi 或重新檢查 viem 升級後是否解決。
 
-// @ts-nocheck — viem 2.x ESM exports 在這個 tsc 5.6 + Next 14 combo 下解析失敗;
-// runtime / build 都能正常運作;tsc 型別只在 IDE 提示用。
-// MVP: 這個 route 沒有用到複雜 viem 型別;忽略。
+// @ts-nocheck
 import { NextResponse } from "next/server";
 import { createWalletClient, http, keccak256, toBytes } from "viem";
 import { privateKeyToAccount } from "viem/accounts";

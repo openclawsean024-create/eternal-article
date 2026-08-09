@@ -65,7 +65,8 @@ export function DemoButton() {
             type="button"
             onClick={() => setOpen(false)}
             disabled={busy}
-            className="text-white/40 hover:text-white text-sm"
+            aria-label="關閉 Demo 對話框"
+            className="text-white/40 hover:text-white text-sm w-8 h-8 flex items-center justify-center rounded hover:bg-white/10"
           >
             ✕
           </button>
@@ -74,15 +75,21 @@ export function DemoButton() {
           不用裝錢包,直接生成一個永久 demo 連結。內容只 demo 用,不會真的上鏈。
         </p>
 
-        <div className="mb-3">
-          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+        <fieldset className="mb-3">
+          <legend className="block text-xs uppercase tracking-widest text-white/40 mb-2">
             鏈
-          </label>
-          <div className="grid grid-cols-3 gap-2">
+          </legend>
+          <div
+            role="radiogroup"
+            aria-label="選擇鏈"
+            className="grid grid-cols-3 gap-2"
+          >
             {(["sui", "arweave", "base"] as const).map((c) => (
               <button
                 key={c}
                 type="button"
+                role="radio"
+                aria-checked={chain === c}
                 onClick={() => setChain(c)}
                 disabled={busy}
                 className={`px-3 py-2 rounded-lg text-sm transition ${
@@ -95,31 +102,43 @@ export function DemoButton() {
               </button>
             ))}
           </div>
-        </div>
+        </fieldset>
 
         <div className="mb-3">
-          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+          <label
+            htmlFor="demo-title"
+            className="block text-xs uppercase tracking-widest text-white/40 mb-2"
+          >
             標題
           </label>
           <input
+            id="demo-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={200}
             disabled={busy}
+            required
+            aria-required="true"
             className="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+          <label
+            htmlFor="demo-content"
+            className="block text-xs uppercase tracking-widest text-white/40 mb-2"
+          >
             內容
           </label>
           <textarea
+            id="demo-content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={6}
             disabled={busy}
+            required
+            aria-required="true"
             className="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white font-mono text-sm"
           />
         </div>

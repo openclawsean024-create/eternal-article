@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#060709"/>
+  <!-- 三條主鏈代表: 三個連接的方塊,代表「文章 → 永久儲存」 -->
+  <!-- 左: 文章(輸入) -->
+  <rect x="11" y="20" width="14" height="24" rx="2.5" fill="none" stroke="#f5f6fa" stroke-width="2"/>
+  <line x1="14" y1="26" x2="22" y2="26" stroke="#f5f6fa" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="14" y1="32" x2="22" y2="32" stroke="#f5f6fa" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="14" y1="38" x2="19" y2="38" stroke="#f5f6fa" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- 中: 鏈(三鏈的抽象 — 三色小點) -->
+  <circle cx="32" cy="32" r="2" fill="#4ca3ff"/>
+  <circle cx="36" cy="32" r="2" fill="#ff5a32"/>
+  <circle cx="40" cy="32" r="2" fill="#2151f5"/>
+  <line x1="26" y1="32" x2="29" y2="32" stroke="#f5f6fa" stroke-width="2" stroke-linecap="round"/>
+  <line x1="42" y1="32" x2="45" y2="32" stroke="#f5f6fa" stroke-width="2" stroke-linecap="round"/>
+  <!-- 右: 永久(∞ / 鎖) -->
+  <rect x="46" y="20" width="8" height="11" rx="1.5" fill="none" stroke="#f5f6fa" stroke-width="2"/>
+  <path d="M 48 20 V 17 a 2 2 0 0 1 4 0 V 20" fill="none" stroke="#f5f6fa" stroke-width="2" stroke-linecap="round"/>
+  <rect x="46" y="33" width="8" height="11" rx="1.5" fill="none" stroke="#f5f6fa" stroke-width="2"/>
+  <path d="M 48 33 V 30 a 2 2 0 0 1 4 0 V 33" fill="none" stroke="#f5f6fa" stroke-width="2" stroke-linecap="round"/>
+</svg>

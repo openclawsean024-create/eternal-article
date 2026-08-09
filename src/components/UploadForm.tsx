@@ -136,25 +136,36 @@ export function UploadForm({ chain, walletAddress }: Props) {
     >
       <div className="space-y-4">
         <div>
-          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+          <label
+            htmlFor="ea-title"
+            className="block text-xs uppercase tracking-widest text-white/40 mb-2"
+          >
             標題 <span className="text-red-400">*</span>
           </label>
           <input
+            id="ea-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={200}
             placeholder="給你的文章一個名字"
             disabled={state === "uploading"}
+            required
+            aria-required="true"
+            aria-invalid={title.trim().length === 0 && state === "error"}
             className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 transition"
           />
         </div>
 
         <div>
-          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+          <label
+            htmlFor="ea-author"
+            className="block text-xs uppercase tracking-widest text-white/40 mb-2"
+          >
             作者 <span className="text-white/30">(選填)</span>
           </label>
           <input
+            id="ea-author"
             type="text"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
@@ -167,13 +178,18 @@ export function UploadForm({ chain, walletAddress }: Props) {
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="block text-xs uppercase tracking-widest text-white/40">
+            <label
+              htmlFor="ea-content"
+              className="block text-xs uppercase tracking-widest text-white/40"
+            >
               內容 <span className="text-red-400">*</span>
               <span className="ml-2 normal-case tracking-normal text-white/30">
                 支援 Markdown
               </span>
             </label>
             <span
+              id="ea-bytes"
+              aria-live="polite"
               className={`text-xs font-mono ${
                 byteSize > byteLimit
                   ? "text-red-400"
@@ -186,11 +202,16 @@ export function UploadForm({ chain, walletAddress }: Props) {
             </span>
           </div>
           <textarea
+            id="ea-content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={14}
             placeholder={"# 我的第一篇永久文章\n\n這段文字會永遠留在區塊鏈上。"}
             disabled={state === "uploading"}
+            required
+            aria-required="true"
+            aria-describedby="ea-bytes"
+            aria-invalid={content.trim().length === 0 && state === "error"}
             className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 transition font-mono text-sm leading-relaxed resize-y"
           />
         </div>

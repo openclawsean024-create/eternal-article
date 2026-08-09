@@ -163,13 +163,32 @@ export function ArticleReader({ id }: { id: string }) {
             </div>
           )}
 
-          <div className="pt-3 border-t border-white/5 flex gap-3">
+          <div className="pt-3 border-t border-white/5 flex gap-3 flex-wrap">
             <button
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  navigator.clipboard.writeText(window.location.href);
+              onClick={async () => {
+                if (typeof window === "undefined") return;
+                try {
+                  await navigator.clipboard.writeText(window.location.href);
+                  // 簡單的視覺回饋 — 用 inline state 替代 alert
+                  const btn = document.activeElement as HTMLButtonElement | null;
+                  if (btn) {
+                    const original = btn.textContent;
+                    btn.textContent = "✓ 已複製";
+                    setTimeout(() => {
+                      if (btn) btn.textContent = original;
+                    }, 1500);
+                  }
+                } catch {
+                  // 舊瀏覽器 fallback
+                  const ta = document.createElement("textarea");
+                  ta.value = window.location.href;
+                  document.body.appendChild(ta);
+                  ta.select();
+                  document.execCommand("copy");
+                  document.body.removeChild(ta);
                 }
               }}
+              aria-label="複製此文章的永久連結"
               className="text-xs px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/70"
             >
               複製連結
@@ -182,6 +201,7 @@ export function ArticleReader({ id }: { id: string }) {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="在 X (Twitter) 上分享這篇文章"
               className="text-xs px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/70"
             >
               分享到 X
