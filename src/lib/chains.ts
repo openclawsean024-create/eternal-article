@@ -15,7 +15,7 @@ export interface ChainInfo {
   gradientClass: string; // tailwind class for hero text
   glowClass: string; // tailwind class for ambient glow
   ringClass: string; // tailwind class for hover ring
-  /** 鏈的官方 logo 路徑(若有的話);MVP 階段先用文字+配色 */
+  /** 鏈的官方 logo 路徑(若有的話);MVP 階段先用 SVG */
   logoBg: string;
 }
 

@@ -115,7 +115,18 @@ export function WalletConnect({ chain, onConnected }: Props) {
     >
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
-          <div className="text-xs uppercase tracking-widest text-white/40 mb-2">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/40 mb-2">
+            <svg
+              className="w-3.5 h-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden="true"
+            >
+              <path d="M19 7V6a2 2 0 0 0-2-2H5a2 2 0 0 0-0 4h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6" />
+              <circle cx="17" cy="13" r="1.25" fill="currentColor" stroke="none" />
+            </svg>
             錢包
           </div>
 
@@ -132,9 +143,19 @@ export function WalletConnect({ chain, onConnected }: Props) {
                 href={chain.walletUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block text-xs underline text-white/60 hover:text-white"
+                className="inline-flex items-center gap-1 text-xs underline text-white/60 hover:text-white transition-colors"
               >
-                前往安裝 →
+                前往安裝
+                <svg
+                  className="w-3 h-3"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
               </a>
             </div>
           )}

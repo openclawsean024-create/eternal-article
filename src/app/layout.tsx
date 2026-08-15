@@ -1,5 +1,22 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+// Inter — primary UI font (modern, geometric, neutral)
+// JetBrains Mono — monospace for hashes, addresses, code
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+  weight: ["400", "500"],
+});
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ?? "https://eternal-article.vercel.app";
@@ -74,7 +91,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-Hant">
+    <html
+      lang="zh-Hant"
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="min-h-screen bg-ink-950 antialiased">
         <div className="bg-grid min-h-screen">{children}</div>
       </body>

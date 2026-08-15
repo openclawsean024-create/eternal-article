@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { CheckIcon } from "@/components/icons";
 
 export interface ProgressStep {
   id: string;
@@ -13,67 +14,86 @@ interface Props {
   steps: ProgressStep[];
 }
 
+/**
+ * UploadProgress — 4-step stepper with connector lines
+ * 設計重點 (per ui-ux-pro-max):
+ *   - 進度視覺化(步驟條 + connecting line)
+ *   - prefers-reduced-motion: 移除 fill 動畫,只保留顏色 transition
+ *   - aria-live="polite" — 螢幕閱讀器會宣告進度
+ *   - 步驟完成有 CheckIcon(不用 emoji)
+ */
 export function UploadProgress({ steps }: Props) {
+  const reduced = useReducedMotion();
+
   return (
-    <div className="space-y-2">
-      {steps.map((step, idx) => (
-        <motion.div
-          key={step.id}
-          initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: idx * 0.05 }}
-          className={`progress-step ${step.status === "active" ? "active" : ""} ${
-            step.status === "done" ? "done" : ""
-          }`}
-        >
-          <div className="shrink-0 w-5 h-5 flex items-center justify-center">
-            {step.status === "pending" && (
-              <div className="w-2 h-2 rounded-full bg-white/20" />
-            )}
-            {step.status === "active" && (
-              <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-            )}
-            {step.status === "done" && (
-              <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
-                <svg
-                  className="w-3 h-3 text-green-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={3}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            )}
-            {step.status === "error" && (
-              <div className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center">
-                <span className="text-red-400 text-xs">!</span>
-              </div>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="上傳進度"
+      className="stepper"
+    >
+      {steps.map((step, idx) => {
+        const isLast = idx === steps.length - 1;
+        return (
+          <div
+            key={step.id}
+            className={`stepper-step ${step.status}`}
+            aria-current={step.status === "active" ? "step" : undefined}
+          >
             <div
-              className={`text-sm ${
-                step.status === "pending"
-                  ? "text-white/40"
-                  : step.status === "active"
-                    ? "text-white"
-                    : step.status === "done"
-                      ? "text-white/60"
-                      : "text-red-300"
+              className={`stepper-circle ${
+                step.status === "active"
+                  ? "active"
+                  : step.status === "done"
+                    ? "done"
+                    : step.status === "error"
+                      ? "error"
+                      : ""
               }`}
+              aria-hidden="true"
             >
-              {step.label}
+              {step.status === "done" ? (
+                <CheckIcon className="w-4 h-4" />
+              ) : step.status === "error" ? (
+                "!"
+              ) : reduced ? (
+                // reduced motion: 不顯示 spinner,改用靜態數字
+                idx + 1
+              ) : (
+                // default: spinner
+                <motion.span
+                  className="block w-4 h-4 rounded-full border-2 border-current border-t-transparent"
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+              )}
             </div>
+
+            <div className="stepper-label">{step.label}</div>
+
             {step.detail && (
-              <div className="font-mono text-[10px] text-white/40 truncate mt-0.5">
+              <div
+                className="mt-1 font-mono text-[10px] text-white/40 truncate max-w-full px-1"
+                title={step.detail}
+              >
                 {step.detail}
               </div>
             )}
+
+            {!isLast && (
+              <div
+                className={`stepper-connector ${
+                  step.status === "done" ? "done" : step.status === "active" ? "active" : ""
+                }`}
+              />
+            )}
           </div>
-        </motion.div>
-      ))}
+        );
+      })}
     </div>
   );
 }

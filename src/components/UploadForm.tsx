@@ -217,8 +217,24 @@ export function UploadForm({ chain, walletAddress }: Props) {
         </div>
 
         {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-            ⚠ {error}
+          <div
+            role="alert"
+            aria-live="assertive"
+            tabIndex={-1}
+            className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200 flex items-start gap-2.5"
+          >
+            <svg
+              className="w-4 h-4 mt-0.5 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4M12 16h.01" strokeLinecap="round" />
+            </svg>
+            <span>{error}</span>
           </div>
         )}
 
@@ -226,7 +242,7 @@ export function UploadForm({ chain, walletAddress }: Props) {
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className={`w-full py-4 rounded-lg text-base font-semibold transition ${
+            className={`w-full py-4 rounded-lg text-base font-semibold transition focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 ${
               canSubmit
                 ? `bg-white text-black hover:bg-white/90`
                 : "bg-white/5 text-white/30 cursor-not-allowed"
@@ -239,9 +255,9 @@ export function UploadForm({ chain, walletAddress }: Props) {
         )}
 
         {state === "uploading" && (
-          <div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
             <UploadProgress steps={steps} />
-            <div className="mt-3 text-xs text-white/40 text-center">
+            <div className="mt-6 text-xs text-white/40 text-center">
               不要關閉頁面...
             </div>
           </div>
@@ -253,7 +269,7 @@ export function UploadForm({ chain, walletAddress }: Props) {
               setState("idle");
               setError(null);
             }}
-            className="w-full py-4 rounded-lg text-base font-semibold bg-white/10 hover:bg-white/15 text-white transition"
+            className="w-full py-4 rounded-lg text-base font-semibold bg-white/10 hover:bg-white/15 text-white transition focus-visible:ring-2 focus-visible:ring-white/30"
           >
             重試(文章內容保留)
           </button>

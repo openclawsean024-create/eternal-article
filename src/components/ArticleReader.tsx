@@ -3,7 +3,25 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CHAINS, type ChainInfo } from "@/lib/chains";
+import { CHAINS, type ChainInfo, type ChainId } from "@/lib/chains";
+import {
+  SuiIcon,
+  ArweaveIcon,
+  BaseIcon,
+  CopyIcon,
+  ShareIcon,
+  ArrowRightIcon,
+  ExternalLinkIcon,
+  AlertIcon,
+  HashIcon,
+  DatabaseIcon,
+} from "@/components/icons";
+
+const CHAIN_ICON_MAP = {
+  sui: SuiIcon,
+  arweave: ArweaveIcon,
+  base: BaseIcon,
+} as const;
 
 interface ArticleData {
   title: string;
@@ -64,6 +82,7 @@ export function ArticleReader({ id }: { id: string }) {
   }
 
   const chain: ChainInfo = CHAINS[data.ref.chain];
+  const ChainIcon = CHAIN_ICON_MAP[data.ref.chain as ChainId];
   const explorerUrl = chain.explorer + "/tx/" + data.ref.txHash.replace(/^walrus:/, "");
   const gatewayUrl =
     chain.id === "arweave"
@@ -94,9 +113,9 @@ export function ArticleReader({ id }: { id: string }) {
       >
         <div className="flex items-center gap-3 mb-6">
           <div
-            className={`w-10 h-10 rounded-lg bg-gradient-to-br ${chain.logoBg} ring-1 ring-white/10 flex items-center justify-center font-bold`}
+            className={`w-10 h-10 rounded-lg bg-gradient-to-br ${chain.logoBg} ring-1 ring-white/10 flex items-center justify-center text-white shadow-lg`}
           >
-            {chain.name[0]}
+            <ChainIcon className="w-5 h-5" />
           </div>
           <div>
             <div className={`text-lg font-bold ${chain.gradientClass}`}>
@@ -107,13 +126,19 @@ export function ArticleReader({ id }: { id: string }) {
         </div>
 
         {data.mock && (
-          <div className="mb-6 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
-            ⚠ 這是 demo 模式(MVP 測試用),實際內容未儲存在區塊鏈上。
+          <div
+            role="status"
+            className="mb-6 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200 flex items-start gap-2.5"
+          >
+            <AlertIcon className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>
+              這是 demo 模式(MVP 測試用),實際內容未儲存在區塊鏈上。
+            </span>
           </div>
         )}
 
         <article className="prose prose-invert max-w-none">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tighter mb-2">
+          <h1 className="text-3xl md:text-5xl font-bold tracking-[-0.03em] mb-2">
             {data.title}
           </h1>
           {data.author && data.author !== "anonymous" && (
@@ -127,23 +152,31 @@ export function ArticleReader({ id }: { id: string }) {
         </article>
 
         <div className="mt-16 rounded-xl border border-white/10 bg-white/[0.02] p-6 space-y-3">
-          <div className="text-xs uppercase tracking-widest text-white/40">
+          <div className="text-xs uppercase tracking-widest text-white/40 flex items-center gap-2">
+            <DatabaseIcon className="w-3.5 h-3.5" />
             鏈上記錄(任何人皆可驗證)
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <div className="text-white/40 text-xs mb-1">Transaction</div>
+              <div className="text-white/40 text-xs mb-1 flex items-center gap-1.5">
+                <HashIcon className="w-3 h-3" />
+                Transaction
+              </div>
               <a
                 href={explorerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-xs text-white/80 hover:text-white underline break-all"
+                className="font-mono text-xs text-white/80 hover:text-white underline break-all inline-flex items-center gap-1"
               >
                 {data.ref.txHash}
+                <ExternalLinkIcon className="w-3 h-3 shrink-0" />
               </a>
             </div>
             <div>
-              <div className="text-white/40 text-xs mb-1">Storage Layer</div>
+              <div className="text-white/40 text-xs mb-1 flex items-center gap-1.5">
+                <DatabaseIcon className="w-3 h-3" />
+                Storage Layer
+              </div>
               <div className="font-mono text-xs text-white/80 break-all">
                 {data.ref.storage}
               </div>
@@ -156,14 +189,15 @@ export function ArticleReader({ id }: { id: string }) {
                 href={gatewayUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-white/50 hover:text-white"
+                className="text-xs text-white/50 hover:text-white inline-flex items-center gap-1 transition-colors"
               >
-                在原始 storage 查看 →
+                在原始 storage 查看
+                <ExternalLinkIcon className="w-3 h-3" />
               </a>
             </div>
           )}
 
-          <div className="pt-3 border-t border-white/5 flex gap-3 flex-wrap">
+          <div className="pt-3 border-t border-white/5 flex gap-2 flex-wrap">
             <button
               onClick={async () => {
                 if (typeof window === "undefined") return;
@@ -189,8 +223,9 @@ export function ArticleReader({ id }: { id: string }) {
                 }
               }}
               aria-label="複製此文章的永久連結"
-              className="text-xs px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/70"
+              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/70 transition-colors"
             >
+              <CopyIcon className="w-3 h-3" />
               複製連結
             </button>
             <a
@@ -202,15 +237,17 @@ export function ArticleReader({ id }: { id: string }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="在 X (Twitter) 上分享這篇文章"
-              className="text-xs px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/70"
+              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/70 transition-colors"
             >
+              <ShareIcon className="w-3 h-3" />
               分享到 X
             </a>
             <Link
               href="/"
-              className="text-xs px-3 py-1.5 rounded-md bg-white text-black hover:bg-white/90 ml-auto"
+              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-white text-black hover:bg-white/90 ml-auto transition-colors"
             >
               我也要存一篇
+              <ArrowRightIcon className="w-3 h-3" />
             </Link>
           </div>
         </div>

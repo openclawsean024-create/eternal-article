@@ -2,34 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+ * Eternal Article — Global styles
+ * Design system: ui-ux-pro-max Minimalism + crypto-tech hybrid
+ * ============================================================================
+ */
+
 :root {
-  --font-sans: "Inter", "Satoshi", system-ui, -apple-system, "PingFang TC",
-    "Noto Sans TC", sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  /* Fonts — wired up via next/font in layout.tsx */
+  --font-inter: ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Spacing scale (refined from Tailwind defaults) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
 }
 
+/* Base */
 html,
 body {
   background: #060709;
   color: #f5f6fa;
-  font-family: var(--font-sans);
+  font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11"; /* Inter stylistic alternates */
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* 鏈條上方的淡淡網格背景 */
+/* 對中文字型 — 系統 fallback 避免中文在 Inter 沒有的字變成方框 */
+:lang(zh) {
+  font-family:
+    var(--font-inter),
+    "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+
+/* ============================================================================
+ * Faint grid background (hero / cards)
+ * ============================================================================ */
 .bg-grid {
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
+  background-position: -1px -1px;
 }
 
-/* 通用: hover 時有微光掃過卡片 */
+/* ============================================================================
+ * Card shimmer — used by ChainCard hover
+ * 設計: 低頻掃光(2.5s),避免刺眼。respect prefers-reduced-motion.
+ * ============================================================================ */
+.card-shimmer {
+  position: relative;
+  isolation: isolate;
+}
 .card-shimmer::before {
   content: "";
   position: absolute;
@@ -42,24 +77,35 @@ body {
   );
   background-size: 200% 100%;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease-out;
   pointer-events: none;
   border-radius: inherit;
+  z-index: 1;
 }
-.card-shimmer:hover::before {
+.card-shimmer:hover::before,
+.card-shimmer:focus-within::before {
   opacity: 1;
   animation: shimmer 2.5s linear infinite;
 }
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-/* 區塊鏈確認動畫 — 模擬方塊落到鏈上 */
+/* ============================================================================
+ * Focus ring — WCAG 2.4.7 visible focus
+ * 用 ring offset + 邊框顏色變亮
+ * ============================================================================ */
+*:focus-visible {
+  outline: 2px solid #4ca3ff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================================
+ * Chain-block — 區塊鏈確認動畫
+ * 8 個方塊依序落到鏈上,代表「被區塊鏈確認」
+ * ============================================================================ */
 .chain-block {
   width: 8px;
   height: 8px;
@@ -84,26 +130,89 @@ body {
   100% { transform: translateY(0); opacity: 1; }
 }
 
-/* 進度條 */
-.progress-step {
+/* ============================================================================
+ * Stepper — upload progress (new in round 3)
+ * 4 個 step + connecting line,active 變色
+ * ============================================================================ */
+.stepper {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.2s;
+  gap: 0;
+  width: 100%;
 }
-.progress-step.active {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
 }
-.progress-step.done {
-  border-color: rgba(74, 222, 128, 0.3);
+.stepper-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.stepper-circle.active {
+  background: #4ca3ff;
+  border-color: #4ca3ff;
+  color: white;
+  box-shadow: 0 0 0 4px rgba(76, 163, 255, 0.15);
+}
+.stepper-circle.done {
+  background: #4ade80;
+  border-color: #4ade80;
+  color: #060709;
+}
+.stepper-circle.error {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+.stepper-label {
+  margin-top: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  transition: color 0.3s;
+}
+.stepper-step.active .stepper-label,
+.stepper-step.done .stepper-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+.stepper-connector {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+.stepper-step:last-child .stepper-connector {
+  display: none;
+}
+.stepper-connector.done {
+  background: linear-gradient(to right, #4ade80, rgba(74, 222, 128, 0.3));
+}
+.stepper-connector.active {
+  background: linear-gradient(to right, #4ca3ff, rgba(76, 163, 255, 0.3));
 }
 
-/* 文字漸層(hero 用) */
+/* ============================================================================
+ * Text gradients — 3 鏈配色
+ * ============================================================================ */
 .text-gradient-sui {
   background: linear-gradient(135deg, #4ca3ff 0%, #6fb1ff 50%, #ffffff 100%);
   -webkit-background-clip: text;
@@ -123,14 +232,18 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* 文字區 focus 樣式 */
+/* ============================================================================
+ * Form inputs
+ * ============================================================================ */
 textarea:focus,
 input:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.25);
 }
 
-/* 捲軸樣式(深色主題) */
+/* ============================================================================
+ * Scrollbars (dark theme)
+ * ============================================================================ */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -146,8 +259,25 @@ input:focus {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* 不要選取時整個區塊都是藍色 */
+/* ============================================================================
+ * Selection
+ * ============================================================================ */
 ::selection {
   background: rgba(76, 163, 255, 0.3);
   color: #ffffff;
+}
+
+/* ============================================================================
+ * prefers-reduced-motion — disable animations
+ * WCAG 2.3.3 (AAA) + ui-ux-pro-max checklist
+ * ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
