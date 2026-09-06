@@ -1,5 +1,14 @@
 # Eternal Article — 永久上鏈文章網站 PRD
 
+> **🚢 v3.0.2 Fleet Alignment Banner（2026-09-06 by Sean 10-repo-fleet）**
+> 本文件已對齊 SPEC v3.0 契約（§1–§19）。原 v0.2 內容完整保留，僅在頂部 prepend banner + 末尾新增「Fleet v3.0.2 摘要」段。
+> 維護者：Sean Li · Sean 10-repo-fleet
+> 部署：Vercel (`eternal-article.vercel.app`)
+
+---
+
+# 原 v0.2 規格書（保留）
+
 > 版本：v0.2 (MVP + 研究輸入對齊)
 > 作者：Sean + Hermes Agent
 > 建立日期：2026-08-09
@@ -254,3 +263,64 @@
 
 - v0.2 (2026-08-09) — 加入研究備註 + SDK 選型對齊 + Roadmap
 - v0.1 (2026-08-09) — MVP 簡版初稿
+
+---
+
+# Fleet v3.0.2 對齊摘要（2026-09-06 by Sean 10-repo-fleet）
+
+## 對齊契約章節對照
+
+| SPEC v3.0 章節 | 對應本文件段落 |
+|---|---|
+| §1 產品概述 | §0 一句話定位 + §1 Persona + §2 三向同步 |
+| §2 使用者場景 | §3 核心流程（Happy Path + Non-Happy Path） |
+| §3 功能需求 (FR) | §5 技術選型（M1）+ §10 Roadmap |
+| §4 Non-Functional | §4 風格設計 + §6 Non-Goals + §7 DoD |
+| §5 技術架構 | §5.1 主鏈 + §5.2 SDK + §5.3 前端 |
+| §6 Definition of Done | §7 DoD（M1 上線） |
+| §7 部署契約 | Vercel（`eternal-article.vercel.app`）+ GHA `ci.yml` |
+| §8 Out of Scope | §6 Non-Goals |
+| §9 變更日誌 | 本檔底部 + `PRD/CHANGELOG.md` |
+
+## Module Map
+
+- `src/app/` — Next.js 14 App Router (layout, page, about, upload/[chain], r/[id], api/anchor, api/article/[id], api/demo-upload, opengraph-image, twitter-image, robots, sitemap, error, not-found)
+- `src/components/` — React client components (Hero, ChainCard, UploadForm, WalletConnect, UploadProgress, DemoButton, ArticleReader, UploadPageClient, icons)
+- `src/lib/` — 核心邏輯 (chains, article, upload/{types,sui,arweave,base})
+- `tests/` — Node 22 內建 test runner 單元測試 (article.test.mjs, 11 個 case)
+- `.github/workflows/ci.yml` — 4-job CI (lint/test/build/deploy → Vercel)
+- `PRD/SPEC.md` + `PRD/RESEARCH_NOTES.md` + `PRD/CHANGELOG.md`
+
+## 環境變數（optional, 沒設就走 demo / mock）
+
+- `NEXT_PUBLIC_PINATA_JWT` — Pinata IPFS 上傳用
+- `ANCHOR_SIGNER_PRIVATE_KEY` — Base anchor 真發交易用
+- `BASE_RPC_URL` — Base RPC endpoint
+- `NEXT_PUBLIC_BASE_URL` — canonical URL + sitemap
+
+## 部署契約
+
+| 環境 | 目標 | 觸發 |
+|---|---|---|
+| Production | Vercel (`eternal-article.vercel.app`) | push to main |
+| Preview | Per-PR Vercel preview | PR opened |
+| CI | GitHub Actions (4 jobs) | push / PR |
+
+## 5.1 環境變數 fallback
+
+無 `ANCHOR_SIGNER_PRIVATE_KEY` → server-side anchor 走 keccak256 mock（demo 模式，UI 標示「Demo」）。
+無 `NEXT_PUBLIC_PINATA_JWT` → IPFS 上傳走 mock，文章保留在 server-side temp。
+
+## 降級策略
+
+- Wallet 未安裝 → 顯示「請安裝 XXX Wallet」CTA（各鏈對應）
+- 餘額不足 → 顯示「需要 0.001 ETH/SUI」+ 該鏈 faucet 連結
+- 上傳失敗 → 自動 retry 1 次，再失敗保留 textarea 內容
+- Content > 200KB → client-side 提前擋，顯示「目前上限 200KB」
+- Demo 模式（不裝錢包）→ `🎮 Try Demo` 按鈕 + `/api/demo-upload` 直接回 mock ArticleRef
+
+## 已知未上鏈（v0.2 / v0.3 補）
+
+- Arweave 真實上傳（目前是 sha256 mock）→ v0.2 接 `@ardrive/turbo-sdk`
+- Sui Walrus 真 anchor contract → v0.2 部署
+- Base anchor 真發交易 → v0.2 加 `ANCHOR_SIGNER_PRIVATE_KEY`
